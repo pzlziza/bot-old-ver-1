@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI YP Buddies</title>
+    <!-- Google Fonts Link -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0&icon_names=keyboard_arrow_down_sentiment_satisfied_attach_file_arrow_upward" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <h2>Hello, YP Buddies!</h2>
+            <ul>
+            <li><a href="tentang.html">Tentang SNBT</a></li>
+            <li><a href="tips.html">Tips Belajar</a></li>
+            <li><a href="latihan.html">Latihan Soal</a></li>
+            <li><a href="#">Beranda</a></li>
+            </ul>
+        </aside>
+
+    <div class="chatbot-popup">
+        <!-- Chatbot Header -->
+        <div class="chatbot-header">
+            <div class="header-info">
+                <img class="chatbot-logo" src="pict/logo-4.png" width="50" height="50" viewbox="0 0 1024 1024">
+                <h2 class="logo-text">Chatbot</h2>
+            </div>
+        </div>
+
+        <!-- Chatbot Body -->
+        <div class="chat-body">
+            <div class="message bot-message">
+                <img class="chatbot-avatar" src="pict/logo-3.jpg" width="50" height="50" viewbox="0 0 1024 1024">
+                <div class="message-text">Hello There 👋</br>How can I help you today?</div>
+            </div>
+        </div>
+
+        <!-- Chatbot Footer -->
+        <div class="chat-footer">
+            <form action="#" class="chat-form">
+                <textarea placeholder="Message" class="message-input" required></textarea>
+                <div class="chat-controls">
+                    <button type="button"class="material-symbols-rounded">sentiment_satisfied</button>
+                    <div class="file-uploaded">
+                        <input type="file" accept="images/*" id="file-input" hidden>
+                        <button type="button" id="file-upload" class="material-symbols-rounded">attach_file</button>
+                    </div>
+                    <button type="submit" id="send-message" class="material-symbols-rounded">arrow_upward</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="newSolutionScript.js"></script>
+</body>
+</html>
