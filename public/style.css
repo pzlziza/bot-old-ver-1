@@ -26,6 +26,7 @@ body {
     height: 100vh;
     transition: transform 0.3s ease;
     box-sizing: border-box;
+    background: #f2f2f2;
 }
 
 .sidebar a {
@@ -53,6 +54,10 @@ body {
     transform: scaleX(0.8);
 }
 
+.sidebar-title {
+    margin-top: 25px;
+}
+
 h2 {
     color: #00827E;
     padding-left: 25px;
@@ -70,9 +75,9 @@ ul {
 
 .chatbot-popup {
     position: relative;
-    width: calc(100% - 250px);
-    margin-left: 250px;
-    background: #fff;
+    width: calc(100% - 0px);
+    /* margin-left: 250px; */
+    background: #f9f9f9;
     overflow: hidden;
     height: 100vh;
     display: flex;
@@ -85,12 +90,15 @@ ul {
     background: #00827E;
     padding: 15px, 22px;
     justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .chatbot-header .header-info {
     display: flex;
     gap: 10px;
     align-items: center;
+    transform: translateX(8px);
+    margin: 10px;
 }
 
 .header-info .chatbot-logo {
@@ -150,6 +158,16 @@ ul {
     animation: dotPulse 1.8s ease-in-out infinite;
 }
 
+.chat-body .bot-message .thinking-indicator .dot:nth-child(1) {
+    animation-delay: 0.2s;
+}
+.chat-body .bot-message .thinking-indicator .dot:nth-child(2) {
+    animation-delay: 0.3s;
+}
+.chat-body .bot-message .thinking-indicator .dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
 .chat-body .user-message {
     flex-direction: column;
     align-items: flex-end;
@@ -166,7 +184,7 @@ ul {
 }
 
 .chat-body .bot-message .message-text {
-    background: #e4e5de;
+    background: #e6fafa;
     border-radius: 15px 15px 15px 3px;
 }
 
@@ -189,7 +207,7 @@ ul {
 .chat-footer .chat-form {
     display: flex;
     align-items: center;
-    background: none;
+    background: #fff;
     border-radius: 32px;
     outline: 1px solid #CCCCE5;
 }
@@ -246,4 +264,71 @@ ul {
 
 .chat-form .chat-controls .material-symbols-rounded:hover {
     background: #e9e9ec;
+}
+
+/* === 🖼️ STYLE UNTUK GAMBAR DALAM CHATBOT === */
+
+/* Gambar yang dikirim / ditampilkan bot */
+.chat-body .bot-message .message-text img {
+    max-width: 100%;             /* biar gambar gak keluar dari bubble */
+    height: auto;                /* tinggi menyesuaikan proporsi */
+    border-radius: 12px;         /* pojokan agak halus */
+    margin-top: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: block;
+}
+
+/* Gambar dengan caption di bawahnya */
+.chat-body .bot-message .message-text figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin: 10px 0;
+}
+
+.chat-body .bot-message .message-text figure figcaption {
+    font-size: 0.85rem;
+    color: #555;
+    text-align: center;
+    font-style: italic;
+}
+
+/* === RESPONSIVE HANDLING UNTUK GAMBAR === */
+@media (max-width: 768px) {
+    .chat-body .bot-message .message-text img {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .chat-body .bot-message .message-text img {
+        max-width: 100%;
+        border-radius: 10px;
+    }
+}
+
+/* === OPTIONAL: animasi lembut saat gambar muncul === */
+.chat-body .bot-message .message-text img {
+    opacity: 0;
+    transform: scale(0.98);
+    animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes dotPulse {
+    0%, 44% { 
+        transform: translateY(0);
+    }
+    28% { 
+        opacity: 0.4;
+        transform: translateY(-4px);
+    }
+    44% { opacity: 0.2; }
 }

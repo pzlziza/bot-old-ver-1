@@ -9,29 +9,29 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <aside class="sidebar" id="sidebar">
-        <h2>Hello, YP Buddies!</h2>
+    <!-- <aside class="sidebar" id="sidebar">
+        <h2 class="sidebar-title"><u>Hello, YP Buddies!</u></h2>
             <ul>
-            <li><a href="tentang.html">Tentang SNBT</a></li>
-            <li><a href="tips.html">Tips Belajar</a></li>
+            <li><a href="tentang.html">Kenalan Sama SNBT?</a></li>
+            <li><a href="tips.html">Kepoin Chatbot dulu!</a></li>
             <li><a href="latihan.html">Latihan Soal</a></li>
             <li><a href="#">Beranda</a></li>
             </ul>
-        </aside>
+        </aside> -->
 
     <div class="chatbot-popup">
         <!-- Chatbot Header -->
         <div class="chatbot-header">
             <div class="header-info">
                 <img class="chatbot-logo" src="pict/logo-4.png" width="50" height="50" viewbox="0 0 1024 1024">
-                <h2 class="logo-text">Chatbot</h2>
+                <h2 class="logo-text">Chatbot SNBT</h2>
             </div>
         </div>
 
         <!-- Chatbot Body -->
         <div class="chat-body">
             <div class="message bot-message">
-                <img class="chatbot-avatar" src="pict/logo-3.jpg" width="50" height="50" viewbox="0 0 1024 1024">
+                <img class="chatbot-avatar" src="pict/logo-3.png" width="50" height="50" viewbox="0 0 1024 1024">
                 <div class="message-text">Hello There 👋</br>How can I help you today?</div>
             </div>
         </div>
@@ -41,17 +41,18 @@
             <form action="#" class="chat-form">
                 <textarea placeholder="Message" class="message-input" required></textarea>
                 <div class="chat-controls">
-                    <button type="button"class="material-symbols-rounded">sentiment_satisfied</button>
+                    <!-- <button type="button"class="material-symbols-rounded">sentiment_satisfied</button>
                     <div class="file-uploaded">
                         <input type="file" accept="images/*" id="file-input" hidden>
                         <button type="button" id="file-upload" class="material-symbols-rounded">attach_file</button>
-                    </div>
+                    </div> -->
                     <button type="submit" id="send-message" class="material-symbols-rounded">arrow_upward</button>
                 </div>
             </form>
         </div>
     </div>
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script>
     <script src="newSolutionScript.js"></script>
 </body>
 </html>
