@@ -175,7 +175,7 @@ ul {
 
 .chat-body .message .message-text {
     padding: 12px 16px;
-    max-width: 75%;
+    max-width: 50%;
     font-size: 0.95rem;
 }
 
@@ -192,6 +192,11 @@ ul {
     color: #fff;
     background: #00827E;
     border-radius: 15px 15px 3px 15px;
+}
+
+.chat-body .bot-message img {
+    max-width: 90%;
+    border-radius: 10px;
 }
 
 .chat-footer {
