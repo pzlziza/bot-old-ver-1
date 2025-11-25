@@ -102,7 +102,7 @@ async function cekJawaban(jawaban) {
     }
 
     hasilHTML += `
-      <br><br>👉 Ketik "<b>next</b>" atau "<b>soal berikutnya</b>" untuk lanjut ke soal selanjutnya.
+      <br><br>👉 Ketik "<b>next</b>" untuk lanjut ke soal selanjutnya.
     `;
 
     return hasilHTML;
