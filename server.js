@@ -140,8 +140,9 @@ app.post("/api/cek-jawaban", (req, res) => {
       const benar = soal.jawaban.toUpperCase() === jawaban_user.toUpperCase();
 
       res.json({
+        benar: benar, // 🟢 Tambahkan ini
         pesan: benar
-          ? "✅ Jawaban kamu benar!"
+          ? "✔️ Jawaban kamu benar!"
           : `❌ Jawaban kamu salah. Jawaban yang benar adalah ${soal.jawaban}.`,
         pembahasan: soal.pembahasan || "Belum ada pembahasan.",
         gambar_pembahasan: soal.gambar_pembahasan

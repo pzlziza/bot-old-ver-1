@@ -3,6 +3,9 @@ const chatBody = document.querySelector(".chat-body");
 const sendMessageButton = document.querySelector("#send-message");
 const fileInput = document.querySelector("#file-input");
 
+let jumlahBenar = 0; // hitung jawaban benar
+let totalSoal = 0; // total soal di mapel aktif
+
 // Simpan status soal yang sedang aktif
 let currentSoal = null;
 let currentMapel = null;
@@ -20,6 +23,30 @@ const scrollToBottom = () => {
     chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: "smooth" });
   }, 100);
 };
+
+// ⭐ Ubah sub-point * menjadi emoji bintang
+function formatBotText(text) {
+  if (!text) return "";
+
+  let output = text;
+
+  // **bold** → <b>bold</b>
+  output = output.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+
+  // * item list → ⭐ item list
+  output = output.replace(/^\s*\*\s+/gm, "⭐ ");
+
+  // Markdown link: [teks](url)
+  output = output.replace(
+    /\[(.*?)\]\((.*?)\)/g,
+    `<a href="$2" target="_blank">$1</a>`
+  );
+
+  // Replace newline dengan <br>
+  output = output.replace(/\n/g, "<br>");
+
+  return output;
+}
 
 // 🔹 Fungsi bantu buat render tampilan soal
 function renderSoal(soal, mapel) {
@@ -54,8 +81,9 @@ async function ambilSoal(mapel) {
     }
 
     allSoal = data;
+    totalSoal = data.length; //simpan total soal
     currentMapel = mapel;
-    currentSoal = 1; // mulai dari soal pertama
+    currentSoal = parseInt(allSoal[0].nomor_soal); // mulai dari soal pertama
 
     return renderSoal(allSoal[0], mapel);
   } catch (err) {
@@ -83,8 +111,8 @@ async function cekJawaban(jawaban) {
 
     const data = await res.json();
 
-    if (data.error || data.message) {
-      return data.message || "Terjadi kesalahan saat memeriksa jawaban.";
+    if (data.benar === true) {
+      jumlahBenar++; // ⭐ Tambah jumlah benar
     }
 
     let hasilHTML = `
@@ -92,7 +120,6 @@ async function cekJawaban(jawaban) {
       <b>Pembahasan:</b> ${data.pembahasan}
     `;
 
-    // Tambahkan gambar pembahasan kalau ada
     if (data.gambar_pembahasan) {
       hasilHTML += `
         <br><img src="${data.gambar_pembahasan}" 
@@ -118,19 +145,42 @@ function nextSoal() {
     return "Tidak ada sesi soal aktif. Ketik 'Tampilkan soal [mapel]' dulu.";
   }
 
-  const nextIndex = allSoal.findIndex((s) => s.nomor_soal === currentSoal) + 1;
+  const nextIndex =
+    allSoal.findIndex((s) => parseInt(s.nomor_soal) === parseInt(currentSoal)) +
+    1;
   const soalBerikut = allSoal[nextIndex];
 
   if (!soalBerikut) {
+    const nilaiAkhir = Math.round((jumlahBenar / totalSoal) * 100);
+
+    const hasilAkhir = `
+      🎉 <b>Latihan Selesai!</b><br><br>
+      📚 <b>Mata Pelajaran:</b> ${currentMapel}<br>
+      ✔️ <b>Jawaban Benar:</b> ${jumlahBenar} dari ${totalSoal}<br>
+      🏆 <b>Nilai Akhir:</b> ${nilaiAkhir}<br><br>
+      Terus latihan ya! Kamu makin dekat dengan SNBT! 🎯
+    `;
+
+    // Reset sesi
     currentSoal = null;
-    return "🎉 Kamu sudah menyelesaikan semua soal untuk mapel ini!";
+    jumlahBenar = 0;
+
+    return hasilAkhir;
   }
 
-  currentSoal = soalBerikut.nomor_soal;
+  currentSoal = parseInt(soalBerikut.nomor_soal);
   return renderSoal(soalBerikut, currentMapel);
 }
 
 // ========== 🔹 FUNGSI RESPONS DARI GEMINI ==========
+// Buat URL otomatis menjadi link
+function convertLinks(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlRegex, (url) => {
+    return `<a href="${url}" target="_blank" style="color:#0077cc; text-decoration:underline;">${url}</a>`;
+  });
+}
+
 async function generateBotResponse(message, incomingMessageDiv) {
   const messageElement = incomingMessageDiv.querySelector(".message-text");
 
@@ -149,7 +199,9 @@ async function generateBotResponse(message, incomingMessageDiv) {
     });
 
     const data = await response.json();
-    messageElement.innerText = data.reply || "Tidak ada respons dari bot.";
+    messageElement.innerHTML = formatBotText(
+      data.reply || "Tidak ada respons dari bot."
+    );
   } catch (error) {
     console.error(error);
     messageElement.innerText = "Gagal mengambil respons dari server.";
