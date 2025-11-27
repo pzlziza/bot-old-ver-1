@@ -88,9 +88,9 @@ ul {
     display: flex;
     align-items: center;
     background: #00827E;
-    padding: 15px, 22px;
+    /* padding: 15px 22px; */
     justify-content: space-between;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); */
 }
 
 .chatbot-header .header-info {
