@@ -33,7 +33,7 @@ app.use("/gambar_pembahasan", express.static("public/gambar_pembahasan"));
 
 // ====== 🤖 API GEMINI ======
 const API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" +
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" +
   process.env.API_KEY;
 
 // ====== 💬 ROUTE CHATBOT (Gemini + Simpan Riwayat) ======
