@@ -1,0 +1,6 @@
+# Melarang akses langsung dari browser ke file .env
+
+<FilesMatch "^\.env$">
+Order allow,deny
+Deny from all
+</FilesMatch>
