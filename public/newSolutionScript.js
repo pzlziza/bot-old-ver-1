@@ -112,24 +112,34 @@ async function cekJawaban(jawaban) {
     const data = await res.json();
 
     if (data.benar === true) {
-      jumlahBenar++; // ⭐ Tambah jumlah benar
+      jumlahBenar++;
     }
 
     let hasilHTML = `
       ${data.pesan}<br><br>
-      <b>Pembahasan:</b> ${data.pembahasan}
+      <b>Pembahasan:</b><br>
+      ${data.pembahasan || "-"}
     `;
 
+    // ✅ FIX UTAMA DI SINI
     if (data.gambar_pembahasan) {
-      hasilHTML += `
-        <br><img src="${data.gambar_pembahasan}" 
-                 alt="Gambar Pembahasan" 
-                 style="max-width:100%; border-radius:10px; margin-top:10px;">
-      `;
-    }
+  hasilHTML += `
+    <figure style="margin-top:12px;">
+      <img 
+        src="${data.gambar_pembahasan}"
+        alt="Gambar Pembahasan"
+        style="
+          max-width:100%;
+          border-radius:12px;
+          box-shadow:0 4px 12px rgba(0,0,0,.15);
+        "
+      >
+    </figure>
+  `;
+}
 
     hasilHTML += `
-      <br><br>👉 Ketik "<b>next</b>" untuk lanjut ke soal selanjutnya.
+      <br>👉 Ketik "<b>next</b>" untuk lanjut ke soal selanjutnya.
     `;
 
     return hasilHTML;

@@ -1,0 +1,66 @@
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.history-btn {
+    font-size: 22px;
+    text-decoration: none;
+    background: #e0f7f5;
+    color: #00827e;
+    padding: 10px 14px;
+    border-radius: 50%;
+    transition: 0.2s ease;
+}
+
+.history-btn:hover {
+    background: #00827e;
+    color: white;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.history-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px 18px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+}
+
+.history-item strong {
+    color: #00827e;
+    text-transform: capitalize;
+}
+
+.history-item small {
+    color: #888;
+    font-size: 12px;
+}
+
+.header-action {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-hapus {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-hapus:hover {
+    background: #c0392b;
+}

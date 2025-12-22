@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Dashboard Admin</title>
+    <link rel="stylesheet" href="css/login.css" />
+</head>
+
+<body class="dashboard-page">
+
+    <!-- ✅ CONTAINER UTAMA -->
+    <div class="dashboard-container">
+        <div>
+            <h2>Dashboard Admin - Kelola Soal</h2>
+            <a href="history.html" class="history-btn" title="History Chat">⏰</a>
+        </div>
+        <!-- ✅ FORM -->
+        <form id="soalForm" enctype="multipart/form-data">
+
+            <input type="text" id="mapel" placeholder="Mata Pelajaran" required />
+
+            <input type="number" id="nomor" placeholder="Nomor Soal" required />
+
+            <textarea id="pertanyaan" placeholder="Pertanyaan" required></textarea>
+
+            <!-- 🔽 INI DIA INPUT GAMBAR SOAL -->
+            <div class="file-row">
+                <!-- <span class="file-label">Gambar Soal (opsional)</span> -->
+
+                <input type="file" id="gambar_soal" name="gambar_soal" accept="image/*" hidden>
+                <label for="gambar_soal" class="file-button">
+                    📁 Upload Gambar
+                </label>
+                <span class="file-name" id="fileName">Belum ada file</span>
+                <img id="previewSoal" style="max-width:200px; margin-top:10px; display:none; border-radius:10px;">
+            </div>
+
+            <input type="text" id="a" placeholder="Opsi A" required />
+            <input type="text" id="b" placeholder="Opsi B" required />
+            <input type="text" id="c" placeholder="Opsi C" required />
+            <input type="text" id="d" placeholder="Opsi D" required />
+            <input type="text" id="e" placeholder="Opsi E" required />
+
+            <input type="text" id="jawaban" placeholder="Jawaban Benar (A/B/C/D/E)" required />
+
+            <textarea id="pembahasan" placeholder="Pembahasan"></textarea>
+
+            <!-- 🔽 INPUT GAMBAR PEMBAHASAN -->
+            <div class="file-row">
+                <!-- <span class="file-label">Gambar Pembahasan (opsional)</span> -->
+
+                <input type="file" id="gambar_pembahasan" name="gambar_pembahasan" accept="image/*" hidden>
+                <label for="gambar_pembahasan" class="file-button">
+                    📁 Upload Gambar
+                </label>
+                <span class="file-name" id="fileNamePembahasan">
+                    Belum ada file
+                </span>
+                <img id="previewPembahasan" style="max-width:200px; margin-top:10px; display:none; border-radius:10px;">
+            </div>
+
+            <button type="submit" id="submitBtn">Tambah Soal</button>
+            <button type="button" id="cancelEditBtn" style="display:none;">
+                Batal Edit
+            </button>
+        </form>
+
+
+        <!-- ✅ TABLE -->
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Mapel</th>
+                    <th>Pertanyaan</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="soalTable"></tbody>
+        </table>
+
+    </div>
+
+    <script src="js/init.js"></script>
+</body>
+
+</html>

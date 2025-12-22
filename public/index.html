@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI YP Buddies</title>
     <!-- Google Fonts Link -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0&icon_names=keyboard_arrow_down_sentiment_satisfied_attach_file_arrow_upward" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0&icon_names=keyboard_arrow_down_sentiment_satisfied_attach_file_arrow_upward" />
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <!-- <aside class="sidebar" id="sidebar">
         <h2 class="sidebar-title"><u>Hello, YP Buddies!</u></h2>
@@ -26,6 +29,24 @@
                 <img class="chatbot-logo" src="pict/logo-4.png" width="50" height="50" viewbox="0 0 1024 1024">
                 <h2 class="logo-text">Chatbot SNBT</h2>
             </div>
+
+            <!-- Login Admin -->
+            <!-- <div class="right-header">
+                <a href="/admin/login.html" class="admin-icon" title="Login Admin">
+                    👤
+                </a>
+            </div> -->
+
+            <div class="admin-menu" id="adminBtn">
+                <div class="admin-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="admin-user-icon">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+
+                <div class="admin-tooltip">Login Admin</div>
+            </div>
         </div>
 
         <!-- Chatbot Body -->
@@ -39,7 +60,8 @@
         <!-- Chatbot Footer -->
         <div class="chat-footer">
             <form action="#" class="chat-form">
-                <textarea placeholder="Message" class="message-input" id="message-input" name="message" required></textarea>
+                <textarea placeholder="Message" class="message-input" id="message-input" name="message"
+                    required></textarea>
                 <div class="chat-controls">
                     <!-- <button type="button"class="material-symbols-rounded">sentiment_satisfied</button>
                     <div class="file-uploaded">
@@ -51,8 +73,15 @@
             </form>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script>
+
+    <script>
+        document.getElementById("adminBtn").addEventListener("click", () => {
+            window.location.href = "/admin/login.html";
+        });
+    </script>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script> -->
     <script src="newSolutionScript.js"></script>
 </body>
+
 </html>
