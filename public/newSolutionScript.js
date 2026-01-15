@@ -52,9 +52,11 @@ function formatBotText(text) {
 function renderSoal(soal, mapel) {
   const gambarHTML = soal.gambar_soal
     ? `<figure style="margin-top:10px;">
-         <img src="${soal.gambar_soal}" 
-              alt="Gambar Soal ${soal.nomor_soal}" 
-              style="max-width:100%; border-radius:10px;">
+         <img 
+           src="/gambar_soal/${soal.gambar_soal}"
+           alt="Gambar Soal ${soal.nomor_soal}"
+           style="max-width:100%; border-radius:10px;"
+         >
        </figure>`
     : "";
 
@@ -73,17 +75,19 @@ function renderSoal(soal, mapel) {
 // ========== 🔹 FUNGSI AMBIL SOAL DARI DATABASE ==========
 async function ambilSoal(mapel) {
   try {
-    const res = await fetch(`/api/soal/${encodeURIComponent(mapel)}`);
-    const data = await res.json();
+    const res = await fetch(
+      `/api/soal?mapel=${encodeURIComponent(mapel)}`
+    );
+    const result = await res.json();
 
-    if (data.error || data.message) {
-      return data.message || "Soal tidak ditemukan.";
+    if (!result.success) {
+      return result.message || "Soal tidak ditemukan.";
     }
 
-    allSoal = data;
-    totalSoal = data.length; //simpan total soal
+    allSoal = result.data;
+    totalSoal = allSoal.length;
     currentMapel = mapel;
-    currentSoal = parseInt(allSoal[0].nomor_soal); // mulai dari soal pertama
+    currentSoal = parseInt(allSoal[0].nomor_soal);
 
     return renderSoal(allSoal[0], mapel);
   } catch (err) {
@@ -156,8 +160,10 @@ function nextSoal() {
   }
 
   const nextIndex =
-    allSoal.findIndex((s) => parseInt(s.nomor_soal) === parseInt(currentSoal)) +
-    1;
+  allSoal.findIndex(
+    (s) => s.nomor_soal === currentSoal
+  ) + 1;
+
   const soalBerikut = allSoal[nextIndex];
 
   if (!soalBerikut) {
@@ -178,7 +184,7 @@ function nextSoal() {
     return hasilAkhir;
   }
 
-  currentSoal = parseInt(soalBerikut.nomor_soal);
+  currentSoal = soalBerikut.nomor_soal;
   return renderSoal(soalBerikut, currentMapel);
 }
 

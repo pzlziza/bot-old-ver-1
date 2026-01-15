@@ -13,16 +13,37 @@ const fileName = document.getElementById("fileName");
 const fileNamePembahasan = document.getElementById("fileNamePembahasan");
 
 // ================= FILE PREVIEW =================
-gambarSoalInput.addEventListener("change", () => {
-  fileName.textContent = gambarSoalInput.files[0]
-    ? gambarSoalInput.files[0].name
-    : "Belum ada file";
+const previewSoal = document.getElementById("previewSoal");
+const previewPembahasan = document.getElementById("previewPembahasan");
+
+// PREVIEW GAMBAR SOAL
+gambarSoalInput?.addEventListener("change", () => {
+  const file = gambarSoalInput.files[0];
+
+  if (file) {
+    fileName.textContent = file.name;
+    previewSoal.src = URL.createObjectURL(file);
+    previewSoal.style.display = "block";
+  } else {
+    fileName.textContent = "Belum ada file";
+    previewSoal.src = "";
+    previewSoal.style.display = "none";
+  }
 });
 
-gambarPembahasanInput.addEventListener("change", () => {
-  fileNamePembahasan.textContent = gambarPembahasanInput.files[0]
-    ? gambarPembahasanInput.files[0].name
-    : "Belum ada file";
+// PREVIEW GAMBAR PEMBAHASAN
+gambarPembahasanInput?.addEventListener("change", () => {
+  const file = gambarPembahasanInput.files[0];
+
+  if (file) {
+    fileNamePembahasan.textContent = file.name;
+    previewPembahasan.src = URL.createObjectURL(file);
+    previewPembahasan.style.display = "block";
+  } else {
+    fileNamePembahasan.textContent = "Belum ada file";
+    previewPembahasan.src = "";
+    previewPembahasan.style.display = "none";
+  }
 });
 
 // ================= LOAD SOAL =================
@@ -47,7 +68,10 @@ async function loadSoal() {
   });
 }
 
-// ================= EDIT MODE =================
+// ================= INIT =================
+loadSoal();
+
+// ================= EDIT MODE (CRUD)=================
 async function editSoal(id) {
   const res = await fetch(`/api/admin/soal/${id}`);
   const result = await res.json();
@@ -146,9 +170,30 @@ form.addEventListener("submit", async (e) => {
 function resetForm() {
   form.reset();
   editId = null;
+
   submitBtn.textContent = "Tambah Soal";
+
+  // reset file name text
   fileName.textContent = "Belum ada file";
   fileNamePembahasan.textContent = "Belum ada file";
+
+  // reset input file
+  gambarSoalInput.value = "";
+  gambarPembahasanInput.value = "";
+
+  // hide preview images
+  const previewSoal = document.getElementById("previewSoal");
+  const previewPembahasan = document.getElementById("previewPembahasan");
+
+  if (previewSoal) {
+    previewSoal.src = "";
+    previewSoal.style.display = "none";
+  }
+
+  if (previewPembahasan) {
+    previewPembahasan.src = "";
+    previewPembahasan.style.display = "none";
+  }
 }
 
 // ================= DELETE =================
@@ -168,6 +213,3 @@ async function hapusSoal(id) {
     alert("❌ Gagal hapus soal");
   }
 }
-
-// ================= INIT =================
-loadSoal();

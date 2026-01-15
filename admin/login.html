@@ -4,6 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <title>Login - YP Buddies AI</title>
     <link rel="stylesheet" href="css/login.css">
 </head>
@@ -15,8 +20,10 @@
         </div>
         <form id="loginForm" class="login-input">
             <label for="inputEmail">Email</label>
+            <!-- <input id="inputEmail" type="email" required autocomplete="off"></input> -->
             <input id="inputEmail" type="email" required></input>
             <label for="inputPassword">Password</label>
+            <!-- <input id="inputPassword" type="password" autocomplete="new-password"></input> -->
             <input id="inputPassword" type="password"></input>
             <button id="buttonLogin" type="submit">Login</button>
             <p class="forgot-password">
@@ -29,8 +36,22 @@
         <h2>Login gagal!</h2>
         <p>Silakan coba lagi</p>
     </div>
-    <!-- <script src="js/init.js"></script> -->
+
     <script src="js/login.js"></script>
+    <script>
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) {
+                document.getElementById("loginForm").reset();
+            }
+        });
+    </script>
+
+    <script>
+        window.onload = function () {
+            document.getElementById("loginForm").reset();
+        };
+    </script>
+
 </body>
 
 </html>

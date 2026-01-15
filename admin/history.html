@@ -4,25 +4,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History Chat - Admin</title>
+    <!-- Feather Icon -->
+    <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="/admin/css/admin.css">
-    <title>Dashboard Admin</title>
 </head>
 
 <body class="dashboard-page">
-    <main class="dashboard-container">
-        <div class="dashboard-header">
-            <h2>⏰ History Chat</h2>
 
-            <div class="header-action">
-                <button id="deleteHistoryBtn" class="btn-hapus">
-                    🗑️ Hapus Semua
-                </button>
-                <a href="dashboard.html" class="history-btn">←</a>
+    <main class="dashboard-container">
+
+        <!-- HEADER -->
+        <div class="dashboard-header">
+
+            <!-- KIRI: BACK + TITLE -->
+            <div class="header-left">
+                <a href="dashboard.html" class="history-btn" title="Kembali">
+                    <i data-feather="arrow-left"></i>
+                </a>
+                <h2>History Chat</h2>
             </div>
+
+            <!-- KANAN: DELETE -->
+            <div class="header-action">
+                <button id="deleteHistoryBtn" class="btn-hapus" title="Hapus semua history">
+                    <i data-feather="trash-2"></i>
+                </button>
+            </div>
+
         </div>
+
+        <!-- LIST HISTORY -->
         <div id="historyList" class="history-list"></div>
+
     </main>
+
     <script src="/admin/js/history.js"></script>
+    <script>
+        feather.replace();
+    </script>
+
 </body>
 
 </html>

@@ -356,6 +356,7 @@ body.dashboard-page main {
     padding: 30px 40px;
 }
 
+/* ===== DASHBOARD HEADER ===== */
 .dashboard-header {
     display: flex;
     justify-content: space-between;
@@ -363,17 +364,166 @@ body.dashboard-page main {
     margin-bottom: 30px;
 }
 
+/* ===== HISTORY BUTTON ===== */
 .history-btn {
-    font-size: 22px;
-    text-decoration: none;
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     background: #e0f7f5;
     color: #00827e;
-    padding: 10px 14px;
+
     border-radius: 50%;
+    text-decoration: none;
     transition: 0.2s ease;
+}
+
+/* ukuran icon feather */
+.history-btn svg {
+    width: 20px;
+    height: 20px;
 }
 
 .history-btn:hover {
     background: #00827e;
     color: white;
+    transform: scale(1.05);
+}
+
+/* =========================
+   DASHBOARD HEADER (UPDATED)
+========================= */
+
+/* container header */
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 40px;
+}
+
+/* kiri (history) */
+.header-left {
+    width: 60px;
+}
+
+/* JUDUL TENGAH */
+.dashboard-header h2 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    color: #00827e;
+    font-size: 22px;
+    font-weight: 600;
+    pointer-events: none;
+}
+
+/* kanan (admin buttons) */
+.admin-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* tombol admin & logout */
+.admin-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #00827e;
+    color: white;
+    transition: 0.2s ease;
+}
+
+/* ukuran icon feather */
+.admin-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* hover */
+.admin-btn:hover {
+    background: #006e6a;
+    transform: scale(1.05);
+}
+
+/* logout merah */
+.admin-btn.logout {
+    background: #e74c3c;
+}
+
+.admin-btn.logout:hover {
+    background: #c0392b;
+}
+
+.logout-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* teks logout */
+.logout-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    cursor: default;
+    user-select: none;
+}
+
+.admin-email {
+    font-size: 14px;
+    font-weight: 600;
+    color: #00827e;
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+.admin-profile {
+    position: relative;
+    display: inline-block;
+}
+
+.admin-actions {
+    position: relative;
+}
+
+/* dropdown box */
+.admin-dropdown {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    min-width: 180px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, .15);
+    display: none;
+    z-index: 1000;
+}
+
+/* aktif */
+.admin-dropdown.show {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* email */
+.admin-email {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    word-break: break-all;
 }
