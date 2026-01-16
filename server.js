@@ -43,15 +43,24 @@ app.use(express.urlencoded({ extended: false }));
 
 /* ================= DATABASE ================= */
 const db = mysql.createConnection({
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASS || "",
-  database: process.env.DB_NAME || "ypbuddies"
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306,
+  // TAMBAHKAN BARIS DI BAWAH INI
+  ssl: {
+    rejectUnauthorized: false
+  },
+  connectTimeout: 10000 
 });
 
 db.connect(err => {
-  if (err) console.error("❌ MySQL error:", err.message);
-  else console.log("✅ MySQL connected");
+  if (err) {
+    console.error("❌ Detail MySQL error:", err.message);
+  } else {
+    console.log("✅ MySQL connected");
+  }
 });
 
 /* ================= AUTH MIDDLEWARE ================= */
@@ -215,7 +224,7 @@ app.post("/api/cek-jawaban", (req, res) => {
 
 /* ================= GEMINI ================= */
 const API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" +
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
   process.env.API_KEY;
 
 /* ================= CHATBOT ================= */
@@ -224,11 +233,14 @@ app.post("/api/chat", async (req, res) => {
   const userMessage = contents?.at(-1)?.parts?.[0]?.text || "";
 
   try {
+    // 1. Simpan chat user ke DB (pake callback supaya gak crash kalau DB error)
     db.query(
       "INSERT INTO chat_history (user_id, role, message) VALUES (?, ?, ?)",
-      ["guest", "user", userMessage]
+      ["guest", "user", userMessage],
+      (err) => { if (err) console.error("❌ Gagal simpan history user:", err.message); }
     );
 
+    // 2. Panggil API Gemini
     const response = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -236,18 +248,30 @@ app.post("/api/chat", async (req, res) => {
     });
 
     const data = await response.json();
+
+    // 3. Cek apakah Gemini ngirim error (misal API Key salah/limit habis)
+    if (data.error) {
+      console.error("❌ Gemini API Error:", data.error.message);
+      return res.status(500).json({ error: "Gemini API bermasalah: " + data.error.message });
+    }
+
     const botReply =
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "Maaf, saya tidak bisa memproses.";
+      "Maaf, saya tidak bisa memproses jawaban saat ini.";
 
+    // 4. Simpan jawaban bot ke DB
     db.query(
       "INSERT INTO chat_history (user_id, role, message) VALUES (?, ?, ?)",
-      ["guest", "bot", botReply]
+      ["guest", "bot", botReply],
+      (err) => { if (err) console.error("❌ Gagal simpan history bot:", err.message); }
     );
 
     res.json({ reply: botReply });
-  } catch {
-    res.status(500).json({ error: "Server error" });
+
+  } catch (error) {
+    // 5. Tangkap error jaringan atau error tak terduga lainnya
+    console.error("❌ Chat system error:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
