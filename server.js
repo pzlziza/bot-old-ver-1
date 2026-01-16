@@ -22,20 +22,49 @@ const safeUnlink = filePath => {
 };
 
 /* ================= SESSION ================= */
+// app.use(
+//   session({
+//     name: "admin-session",
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       httpOnly: true,
+//       sameSite: "lax",
+//       secure: process.env.NODE_ENV === "production",
+//       maxAge: 1000 * 60 * 60
+//     }
+//   })
+// );
+
+app.set("trust proxy", 1);
+
 app.use(
   session({
     name: "admin-session",
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
       httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      secure: true,
       maxAge: 1000 * 60 * 60
     }
   })
 );
+
+/* ================= DEBUG SESSION (SEMENTARA) ================= */
+app.get("/api/debug-session", (req, res) => {
+  res.json({
+    sessionID: req.sessionID,
+    session: req.session,
+    hasAdmin: !!req.session.admin,
+    cookie: req.headers.cookie || null,
+    env: process.env.NODE_ENV
+  });
+});
 
 /* ================= GLOBAL MIDDLEWARE ================= */
 app.use(cors({ origin: true, credentials: true }));
