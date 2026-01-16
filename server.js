@@ -36,6 +36,7 @@ const safeUnlink = filePath => {
 //     }
 //   })
 // );
+app.use(cors({ origin: true, credentials: true }));
 
 app.use(
   session({
@@ -65,7 +66,6 @@ app.get("/api/debug-session", (req, res) => {
 });
 
 /* ================= GLOBAL MIDDLEWARE ================= */
-app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
