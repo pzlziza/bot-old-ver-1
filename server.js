@@ -10,6 +10,7 @@ import fs from "fs";
 
 dotenv.config();
 const app = express();
+app.set("trust proxy", 1);
 
 /* ================= UTIL ================= */
 const safeUnlink = filePath => {
