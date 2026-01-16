@@ -1,15 +1,14 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 import express from "express";
 import session from "express-session";
 import fetch from "node-fetch";
+import dotenv from "dotenv";
 import mysql from "mysql2";
 import cors from "cors";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
 
+dotenv.config();
 const app = express();
 
 /* ================= UTIL ================= */
@@ -37,25 +36,22 @@ app.use(
   })
 );
 
+/* ================= GLOBAL MIDDLEWARE ================= */
+app.use(cors({ origin: true, credentials: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 /* ================= DATABASE ================= */
-const dbConfig = {
+const db = mysql.createConnection({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
   password: process.env.DB_PASS || "",
-  database: process.env.DB_NAME || "ypbuddies",
-  port: process.env.DB_PORT || 3306,
-  // MODIFIKASI BAGIAN INI:
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false
-};
-
-const db = mysql.createConnection(dbConfig);
+  database: process.env.DB_NAME || "ypbuddies"
+});
 
 db.connect(err => {
-  if (err) {
-    console.error("❌ Detail MySQL error:", err.message);
-  } else {
-    console.log("✅ MySQL connected");
-  }
+  if (err) console.error("❌ MySQL error:", err.message);
+  else console.log("✅ MySQL connected");
 });
 
 /* ================= AUTH MIDDLEWARE ================= */
@@ -67,28 +63,53 @@ const requireAdmin = (req, res, next) => {
 };
 
 /* ================= CHECK ADMIN SESSION ================= */
-app.get("/api/admin/me", requireAdmin, (req, res) => {
-  res.json({ success: true, admin: req.session.admin });
-});
-
-/* ================= ADMIN AUTH ================= */
 app.post("/api/admin/login", (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: "Email dan password wajib diisi"
+    });
+  }
 
   db.query(
     "SELECT id, email FROM admin WHERE email = ? AND password = ?",
     [email, password],
     (err, rows) => {
-      if (err || rows.length === 0) {
-        return res.json({ success: false });
+      if (err) {
+        console.error("❌ Login DB error:", err);
+        return res.status(500).json({
+          success: false,
+          message: "Server error"
+        });
       }
 
-      req.session.admin = {
-        id: rows[0].id,
-        email: rows[0].email
-      };
+      if (rows.length === 0) {
+        return res.status(401).json({
+          success: false,
+          message: "Email atau password salah"
+        });
+      }
 
-      res.json({ success: true });
+      req.session.regenerate(err => {
+        if (err) {
+          return res.status(500).json({
+            success: false,
+            message: "Gagal membuat session"
+          });
+        }
+
+        req.session.admin = {
+          id: rows[0].id,
+          email: rows[0].email
+        };
+
+        res.json({
+          success: true,
+          admin: req.session.admin
+        });
+      });
     }
   );
 });
@@ -219,7 +240,7 @@ app.post("/api/cek-jawaban", (req, res) => {
 
 /* ================= GEMINI ================= */
 const API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" +
   process.env.API_KEY;
 
 /* ================= CHATBOT ================= */
@@ -228,14 +249,11 @@ app.post("/api/chat", async (req, res) => {
   const userMessage = contents?.at(-1)?.parts?.[0]?.text || "";
 
   try {
-    // 1. Simpan chat user ke DB (pake callback supaya gak crash kalau DB error)
     db.query(
       "INSERT INTO chat_history (user_id, role, message) VALUES (?, ?, ?)",
-      ["guest", "user", userMessage],
-      (err) => { if (err) console.error("❌ Gagal simpan history user:", err.message); }
+      ["guest", "user", userMessage]
     );
 
-    // 2. Panggil API Gemini
     const response = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -243,30 +261,18 @@ app.post("/api/chat", async (req, res) => {
     });
 
     const data = await response.json();
-
-    // 3. Cek apakah Gemini ngirim error (misal API Key salah/limit habis)
-    if (data.error) {
-      console.error("❌ Gemini API Error:", data.error.message);
-      return res.status(500).json({ error: "Gemini API bermasalah: " + data.error.message });
-    }
-
     const botReply =
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "Maaf, saya tidak bisa memproses jawaban saat ini.";
+      "Maaf, saya tidak bisa memproses.";
 
-    // 4. Simpan jawaban bot ke DB
     db.query(
       "INSERT INTO chat_history (user_id, role, message) VALUES (?, ?, ?)",
-      ["guest", "bot", botReply],
-      (err) => { if (err) console.error("❌ Gagal simpan history bot:", err.message); }
+      ["guest", "bot", botReply]
     );
 
     res.json({ reply: botReply });
-
-  } catch (error) {
-    // 5. Tangkap error jaringan atau error tak terduga lainnya
-    console.error("❌ Chat system error:", error.message);
-    res.status(500).json({ error: "Internal Server Error" });
+  } catch {
+    res.status(500).json({ error: "Server error" });
   }
 });
 
