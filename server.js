@@ -121,6 +121,15 @@ app.post("/api/admin/logout", (req, res) => {
   });
 });
 
+/* ================= CHECK ADMIN SESSION ================= */
+app.get("/api/admin/me", requireAdmin, (req, res) => {
+  console.log("🧠 SESSION ADMIN:", req.session.admin);
+  res.json({
+    success: true,
+    admin: req.session.admin
+  });
+});
+
 /* ================= STATIC IMAGE ================= */
 ["public/gambar_soal", "public/gambar_pembahasan"].forEach(dir => {
   if (!fs.existsSync(dir)) {

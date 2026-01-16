@@ -2,22 +2,25 @@
 function checkAdminSession() {
   fetch("/api/admin/me", { credentials: "include" })
     .then(res => {
-      if (!res.ok) {
-        window.location.replace("/admin/login.html");
-        throw new Error("Session expired");
-      }
+      if (!res.ok) throw new Error("Unauthorized");
       return res.json();
     })
     .then(data => {
       const emailEl = document.getElementById("adminEmail");
-      if (emailEl && data?.admin) {
-        emailEl.innerText = data.admin.email;
+      if (emailEl) {
+        emailEl.textContent = data.admin.email;
       }
     })
     .catch(() => {
       window.location.replace("/admin/login.html");
     });
 }
+
+document.addEventListener("DOMContentLoaded", checkAdminSession);
+
+window.addEventListener("pageshow", e => {
+  if (e.persisted) checkAdminSession();
+});
 
 // cek saat page load
 checkAdminSession();

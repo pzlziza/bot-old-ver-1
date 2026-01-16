@@ -24,10 +24,11 @@ form.addEventListener("submit", async (e) => {
     if (data.success) {
       window.location.replace("/admin/dashboard.html");
     } else {
-      alert("❌ " + data.message);
+      alert("❌ " + (data.message || "Login gagal"));
     }
-  } catch (error) {
-    alert("❌ Gagal konek ke server");
-    console.error(error);
-  }
+
+    } catch (error) {
+      alert("❌ Gagal konek ke server");
+      console.error(error);
+    }
 });
