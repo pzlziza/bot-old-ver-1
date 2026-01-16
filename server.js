@@ -1,14 +1,15 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import session from "express-session";
 import fetch from "node-fetch";
-import dotenv from "dotenv";
 import mysql from "mysql2";
 import cors from "cors";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-dotenv.config();
 const app = express();
 
 /* ================= UTIL ================= */
@@ -36,24 +37,18 @@ app.use(
   })
 );
 
-/* ================= GLOBAL MIDDLEWARE ================= */
-app.use(cors({ origin: true, credentials: true }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
 /* ================= DATABASE ================= */
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
+const dbConfig = {
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASS || "",
+  database: process.env.DB_NAME || "ypbuddies",
   port: process.env.DB_PORT || 3306,
-  // TAMBAHKAN BARIS DI BAWAH INI
-  ssl: {
-    rejectUnauthorized: false
-  },
-  connectTimeout: 10000 
-});
+  // MODIFIKASI BAGIAN INI:
+  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false
+};
+
+const db = mysql.createConnection(dbConfig);
 
 db.connect(err => {
   if (err) {
