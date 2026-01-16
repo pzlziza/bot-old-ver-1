@@ -10,7 +10,6 @@ import fs from "fs";
 
 dotenv.config();
 const app = express();
-app.set("trust proxy", 1);
 
 /* ================= UTIL ================= */
 const safeUnlink = filePath => {
@@ -22,51 +21,25 @@ const safeUnlink = filePath => {
 };
 
 /* ================= SESSION ================= */
-// app.use(
-//   session({
-//     name: "admin-session",
-//     secret: process.env.SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie: {
-//       httpOnly: true,
-//       sameSite: "lax",
-//       secure: process.env.NODE_ENV === "production",
-//       maxAge: 1000 * 60 * 60
-//     }
-//   })
-// );
-/* ================= GLOBAL MIDDLEWARE ================= */
-app.use(cors({ origin: true, credentials: true }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
 app.use(
   session({
     name: "admin-session",
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    proxy: true,
     cookie: {
       httpOnly: true,
-      sameSite: "none",
-      secure: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 60
     }
   })
 );
 
-/* ================= DEBUG SESSION (SEMENTARA) ================= */
-app.get("/api/debug-session", (req, res) => {
-  res.json({
-    sessionID: req.sessionID,
-    session: req.session,
-    hasAdmin: !!req.session.admin,
-    cookie: req.headers.cookie || null,
-    env: process.env.NODE_ENV
-  });
-});
+/* ================= GLOBAL MIDDLEWARE ================= */
+app.use(cors({ origin: true, credentials: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 /* ================= DATABASE ================= */
 const db = mysql.createConnection({
@@ -90,53 +63,28 @@ const requireAdmin = (req, res, next) => {
 };
 
 /* ================= CHECK ADMIN SESSION ================= */
+app.get("/api/admin/me", requireAdmin, (req, res) => {
+  res.json({ success: true, admin: req.session.admin });
+});
+
+/* ================= ADMIN AUTH ================= */
 app.post("/api/admin/login", (req, res) => {
   const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: "Email dan password wajib diisi"
-    });
-  }
 
   db.query(
     "SELECT id, email FROM admin WHERE email = ? AND password = ?",
     [email, password],
     (err, rows) => {
-      if (err) {
-        console.error("❌ Login DB error:", err);
-        return res.status(500).json({
-          success: false,
-          message: "Server error"
-        });
+      if (err || rows.length === 0) {
+        return res.json({ success: false });
       }
 
-      if (rows.length === 0) {
-        return res.status(401).json({
-          success: false,
-          message: "Email atau password salah"
-        });
-      }
+      req.session.admin = {
+        id: rows[0].id,
+        email: rows[0].email
+      };
 
-      req.session.regenerate(err => {
-        if (err) {
-          return res.status(500).json({
-            success: false,
-            message: "Gagal membuat session"
-          });
-        }
-
-        req.session.admin = {
-          id: rows[0].id,
-          email: rows[0].email
-        };
-
-        res.json({
-          success: true,
-          admin: req.session.admin
-        });
-      });
+      res.json({ success: true });
     }
   );
 });
@@ -145,15 +93,6 @@ app.post("/api/admin/logout", (req, res) => {
   req.session.destroy(() => {
     res.clearCookie("admin-session");
     res.json({ success: true });
-  });
-});
-
-/* ================= CHECK ADMIN SESSION ================= */
-app.get("/api/admin/me", requireAdmin, (req, res) => {
-  console.log("🧠 SESSION ADMIN:", req.session.admin);
-  res.json({
-    success: true,
-    admin: req.session.admin
   });
 });
 
