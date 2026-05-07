@@ -221,9 +221,54 @@ const API_URL =
 /* ================= CHATBOT ================= */
 app.post("/api/chat", async (req, res) => {
   const { contents } = req.body;
-  const userMessage = contents?.at(-1)?.parts?.[0]?.text || "";
+
+  const userMessage =
+    contents?.at(-1)?.parts?.[0]?.text?.toLowerCase() || "";
+
+  // ================= FILTER TOPIK SNBT =================
+  const allowedKeywords = [
+    "snbt",
+    "utbk",
+    "matematika",
+    "fisika",
+    "kimia",
+    "biologi",
+    "bahasa indonesia",
+    "bahasa inggris",
+    "sejarah",
+    "geografi",
+    "ekonomi",
+    "penalaran",
+    "literasi",
+    "soal",
+    "pembahasan",
+    "jawaban",
+    "tps",
+    "tka",
+    "quiz",
+    "latihan",
+    "grammar",
+    "reading",
+    "vektor",
+    "trigonometri",
+    "peluang",
+    "statistika"
+  ];
+
+  const isAllowed = allowedKeywords.some(keyword =>
+    userMessage.includes(keyword)
+  );
+
+  // ❌ kalau bukan topik SNBT
+  if (!isAllowed) {
+    return res.json({
+      reply:
+        "Maaf 🙏 Chatbot ini khusus membantu pembelajaran dan latihan soal SNBT/UTBK."
+    });
+  }
 
   try {
+    // simpan history user
     db.query(
       "INSERT INTO chat_history (user_id, role, message) VALUES (?, ?, ?)",
       ["guest", "user", userMessage]
@@ -231,23 +276,43 @@ app.post("/api/chat", async (req, res) => {
 
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents })
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        contents,
+        systemInstruction: {
+          parts: [
+            {
+              text:
+                "Kamu adalah chatbot pendidikan khusus SNBT/UTBK. Jawab hanya pertanyaan seputar pembelajaran, latihan soal, dan persiapan SNBT."
+            }
+          ]
+        }
+      })
     });
 
     const data = await response.json();
+
     const botReply =
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
       "Maaf, saya tidak bisa memproses.";
 
+    // simpan history bot
     db.query(
       "INSERT INTO chat_history (user_id, role, message) VALUES (?, ?, ?)",
       ["guest", "bot", botReply]
     );
 
-    res.json({ reply: botReply });
-  } catch {
-    res.status(500).json({ error: "Server error" });
+    res.json({
+      reply: botReply
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      error: "Server error"
+    });
   }
 });
 
