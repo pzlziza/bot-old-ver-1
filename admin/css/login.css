@@ -342,18 +342,56 @@ tbody tr:nth-child(even) {
    FIX DASHBOARD LAYOUT
 ========================= */
 
+/* =========================
+   FIX DASHBOARD LAYOUT
+========================= */
+
 body.dashboard-page {
     display: block;
     background: #f4fefe;
-    min-height: auto;
-    height: auto;
+
+    min-height: 100vh;
     overflow-y: auto;
+
+    padding: 30px;
 }
 
-body.dashboard-page main {
-    max-width: none;
-    margin: auto;
-    padding: 30px 40px;
+/* container dashboard */
+.dashboard-container {
+    width: 100%;
+}
+
+/* biar form kepanjangan tetap bisa discroll */
+#soalForm {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 50px;
+}
+
+/* RESPONSIVE MOBILE */
+@media (max-width: 768px) {
+    #soalForm {
+        grid-template-columns: 1fr;
+    }
+
+    #soalForm textarea,
+    .file-row,
+    #soalForm button {
+        grid-column: span 1;
+    }
+
+    .dashboard-header h2 {
+        position: static;
+        transform: none;
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        gap: 15px;
+    }
 }
 
 /* ===== DASHBOARD HEADER ===== */
@@ -526,4 +564,18 @@ body.dashboard-page main {
     font-weight: 600;
     color: #333;
     word-break: break-all;
+}
+
+/* =========================
+   TABLE SCROLL
+========================= */
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    min-width: 900px;
 }

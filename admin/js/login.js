@@ -6,6 +6,7 @@ form.addEventListener("submit", async (e) => {
   const email = document.getElementById("inputEmail").value;
   const password = document.getElementById("inputPassword").value;
 
+  //validasi form input
   if (!email || !password) {
     alert("Email dan Password wajib diisi");
     return;

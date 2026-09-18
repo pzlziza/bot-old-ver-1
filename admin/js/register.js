@@ -38,55 +38,72 @@
 //   }
 // });
 /* ================= ADMIN REGISTER ================= */
-app.post("/api/admin/register", (req, res) => {
-  const { email, password } = req.body;
+const form = document.getElementById("registerForm");
 
-  if (!email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: "Email dan password wajib diisi"
-    });
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  console.log("🔥 FORM SUBMIT");
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const confirmPassword = document
+    .getElementById("confirmPassword")
+    .value.trim();
+
+  // VALIDASI
+  if (!email || !password || !confirmPassword) {
+    alert("Semua field wajib diisi!");
+    return;
   }
 
-  // cek email sudah ada atau belum
-  db.query(
-    "SELECT id FROM admin WHERE email = ?",
-    [email],
-    (err, rows) => {
-      if (err) {
-        console.error("❌ Register check error:", err);
-        return res.status(500).json({
-          success: false,
-          message: "Server error"
-        });
-      }
+  if (password !== confirmPassword) {
+    alert("Password tidak sama!");
+    return;
+  }
 
-      if (rows.length > 0) {
-        return res.status(400).json({
-          success: false,
-          message: "Email sudah digunakan"
-        });
-      }
+  try {
 
-      // insert admin baru
-      db.query(
-        "INSERT INTO admin (email, password) VALUES (?, ?)",
-        [email, password],
-        err => {
-          if (err) {
-            console.error("❌ Register insert error:", err);
-            return res.status(500).json({
-              success: false,
-              message: "Gagal membuat akun"
-            });
-          }
+    console.log("📤 Kirim data ke server...");
 
-          res.json({
-            success: true,
-            message: "Akun berhasil dibuat"
-          });
-        }
-      );
+    const res = await fetch("/api/admin/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
+    });
+
+    console.log("📥 STATUS:", res.status);
+
+    const text = await res.text();
+
+    console.log("📥 RESPONSE:", text);
+
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch {
+      alert("❌ Response bukan JSON");
+      return;
     }
-  );
+
+    if (data.success) {
+      alert("✅ Akun berhasil dibuat");
+
+      window.location.href = "/admin/login.html";
+    } else {
+      alert("❌ " + data.message);
+    }
+
+  } catch (err) {
+
+    console.error("❌ FETCH ERROR:", err);
+
+    alert("❌ Gagal konek ke server");
+  }
 });

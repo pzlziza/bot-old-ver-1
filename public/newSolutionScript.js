@@ -19,9 +19,16 @@ const createMessageElement = (content, ...classes) => {
 };
 
 const scrollToBottom = () => {
+
   setTimeout(() => {
-    chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: "smooth" });
-  }, 100);
+
+    chatBody.scrollTo({
+      top: chatBody.scrollHeight,
+      behavior: "smooth"
+    });
+
+  }, 150);
+
 };
 
 // ⭐ Ubah sub-point * menjadi emoji bintang
@@ -41,7 +48,6 @@ function formatBotText(text) {
     /\[(.*?)\]\((.*?)\)/g,
     `<a href="$2" target="_blank">$1</a>`
   );
-
   // Replace newline dengan <br>
   output = output.replace(/\n/g, "<br>");
 
@@ -197,34 +203,85 @@ function convertLinks(text) {
   });
 }
 
+// async function generateBotResponse(message, incomingMessageDiv) {
+//   const messageElement = incomingMessageDiv.querySelector(".message-text");
+
+//   try {
+//     const response = await fetch("/api/chat", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         contents: [
+//           {
+//             role: "user",
+//             parts: [{ text: message }],
+//           },
+//         ],
+//       }),
+//     });
+
+//     const data = await response.json();
+//     messageElement.innerHTML = formatBotText(
+//       data.reply || "Tidak ada respons dari bot."
+//     );
+//   } catch (error) {
+//     console.error(error);
+//     messageElement.innerText = "Gagal mengambil respons dari server.";
+//   } finally {
+//     incomingMessageDiv.classList.remove("thinking");
+//     scrollToBottom();
+//   }
+// }
+
 async function generateBotResponse(message, incomingMessageDiv) {
-  const messageElement = incomingMessageDiv.querySelector(".message-text");
+
+  const messageElement =
+    incomingMessageDiv.querySelector(".message-text");
 
   try {
+
     const response = await fetch("/api/chat", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      // ✅ FIX BARU
       body: JSON.stringify({
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: message }],
-          },
-        ],
-      }),
+        message: message
+      })
+
     });
 
     const data = await response.json();
+
+    console.log(data);
+
     messageElement.innerHTML = formatBotText(
       data.reply || "Tidak ada respons dari bot."
     );
+
+    const images = messageElement.querySelectorAll("img");
+
+images.forEach((img) => {
+  img.onload = () => scrollToBottom();
+});
+
   } catch (error) {
+
     console.error(error);
-    messageElement.innerText = "Gagal mengambil respons dari server.";
+
+    messageElement.innerText =
+      "Gagal mengambil respons dari server.";
+
   } finally {
+
     incomingMessageDiv.classList.remove("thinking");
+
     scrollToBottom();
+
   }
+
 }
 
 // ========== 🔹 HANDLE PESAN USER ==========
@@ -271,6 +328,9 @@ const handleOutGoingMessage = async (e) => {
     const soalText = await ambilSoal(mapel);
     botDiv.querySelector(".message-text").innerHTML = soalText;
     botDiv.classList.remove("thinking");
+
+    scrollToBottom();
+
     return;
   }
 
@@ -279,16 +339,25 @@ const handleOutGoingMessage = async (e) => {
     const result = await cekJawaban(msgLower.toUpperCase());
     botDiv.querySelector(".message-text").innerHTML = result;
     botDiv.classList.remove("thinking");
+
+    scrollToBottom();
+
     return;
   }
 
   // Jika user mengetik next / soal berikutnya / lanjut
-  if (["next", "soal berikutnya", "lanjut", "berikutnya"].includes(msgLower)) {
-    const soalText = nextSoal();
-    botDiv.querySelector(".message-text").innerHTML = soalText;
-    botDiv.classList.remove("thinking");
-    return;
-  }
+if (["next", "soal berikutnya", "lanjut", "berikutnya"].includes(msgLower)) {
+
+  const soalText = nextSoal();
+
+  botDiv.querySelector(".message-text").innerHTML = soalText;
+
+  botDiv.classList.remove("thinking");
+
+  scrollToBottom();
+
+  return;
+}
 
   // Jika bukan soal / jawaban / perintah khusus → kirim ke Gemini
   await generateBotResponse(message, botDiv);
